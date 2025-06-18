@@ -1,0 +1,8 @@
+NODE.JS
+
+for kill the terminal Ctrl + c
+
+mjrajak47z
+H3Pkg3GTHrbWmJDd
+
+mongodb+srv://mjrajak47z:H3Pkg3GTHrbWmJDd@cluster0.ht39vu6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

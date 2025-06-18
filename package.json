@@ -1,0 +1,19 @@
+{
+  "name": "basic-routing",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoos": "^0.0.1-security",
+    "mongoose": "^8.15.1",
+    "nodemon": "^3.1.10"
+  }
+}

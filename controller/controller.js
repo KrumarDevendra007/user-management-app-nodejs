@@ -119,11 +119,309 @@ const logout =  (req, res) => {
     }
 }
 
+// get user by name
+const getByName = async (req, res) => {
+    try{
+        
+        const userName = req.params.name;
+        const response = await User.find({
+            name: userName
+        });
+
+        if(response.length === 0){
+            return res.status(404).send("User not found.");
+        }
+
+        res.status(200).json({
+            message:"User fetched successfully",
+            user: response
+        });
+    }
+    catch(err){
+        console.error("Error fetching user:", err);
+    }
+}
+
+// get user by country
+const getByCountry = async (req,res) => {
+    try{
+       const countryName = req.params.country;
+       const user = await User.find({
+            country:countryName
+       });
+
+       if(user.length === 0){
+           return res.status(404).send("No users found from this country.");
+       }
+       
+       res.status(200).json({
+          message: "Users from the specified country fetched successfully",
+          user: user
+       });
+
+    }
+    catch(err){
+        console.error("Error fetching user:", err);
+    }
+}
+
+//get user by age greater then
+const userGreaterThenAge = async (req, res) => {
+      try{
+         const age = parseInt(req.params.age, 10);
+         const users = await User.find({
+            age: {
+                $gte: age
+            }
+         });
+
+         res.status(200).json({
+            message:"Users older than specified age fetched successfully",
+            users:users
+         })
+      }
+      catch(err){
+        consloe.error("Error fetching by age:", err);
+      }
+}
+
+
+//get user by age less then
+const userLessThenAge = async (req, res) => {
+    try{
+        const age = parseInt(req.params.age, 10);
+        const users = await User.find({
+            age:{
+                $lte: age
+            }
+        });
+
+        res.status(200).json({
+            message: "Users yonger than specified age fetched successfully",
+            users:users
+        });
+    }
+    catch(err){
+        console.error("Error fetching by age:", err);
+    }
+}
+
+// get user which is not-equal to
+const notEqualTo = async (req, res) => {
+    try{
+        const age = parseInt(req.params.age, 10);
+        const users = await User.find({
+            age: {
+               $ne: age
+            }
+        });
+
+        res.status(200).json({
+            message: "Users specified age fetched successfully",
+            users:users
+        });
+    }
+    catch(err){
+        console.error("Error fetching users by age", err);
+    }
+}
+
+// get user by logical OR Operator
+const getUserByCountryOrAge = async (req, res) =>{
+    try{
+       const country = req.params.country;
+       const age = parseInt(req.params.age, 10);
+
+       const users = await User.find({
+           $or:[
+            {
+                country:country
+              },
+              {
+                age:age
+              }
+           ]
+       });
+
+       res.status(200).json({
+            message: "Users from specified country and age fetched successfully",
+            users: users
+       });
+    }
+    catch(err){
+        console.log("Error fetching users by country and age:",err);
+    }
+}
+
+// get user by logical NOR Operator
+
+const userByNotAge = async (req, res) => {
+            try{
+               const age = req.params.age;
+               const users = await User.find({
+                  $nor:[
+                    {
+                        age: age
+                    }
+                  ]
+               });
+
+               res.status(200).json({
+                message:"Users not of specified age fetched successfully",
+                users:users
+               })
+            }
+            catch(err){
+                console.error("Error fetching users not of specified age:", err);
+            }
+}
+
+// get user by logical AND Operator
+const multipleQuery = async (req, res) => {
+    try{
+        const age = parseInt(req.params.age, 10);
+
+        const users = await User.find({
+            $and:[
+                {
+                    age: {$gte:age}
+                },
+                {
+                    country:"India"
+                },
+                {
+                    isActive: true
+                }
+            ]
+        });
+
+        res.status(200).json({
+            message: "Users matching query criteria fetched successfully",
+            users: users
+        });
+    }
+    catch(err){
+        console.error("Error fetching users by query:", err);
+    } 
+}
+
+// get user by age in range of maximum and minimum 
+const getUserByMaxMinAge = async (req, res) => {
+    try{
+        const minAge = parseInt(req.params.age, 10);
+        const maxAge = parseInt(req.params.age, 10);
+
+        const users = await User.find({
+            // $and:[
+            //     {
+            //         age: {$gte:minAge}
+            //     },
+            //     {
+            //         age: {$lte:maxAge}
+            //     }
+            // ]
+
+            age:{
+                $gte:minAge,
+                $lte:maxAge
+            }
+        });
+
+        res.status(200).json({
+             message: "Users within specified age range fetched successfully",
+            users:users
+        })
+
+    }
+    catch(err){
+        console.error("Error fetching users by age range:", err);
+    }
+}
+
+
+
+
+//****************Aggregation********************* */
+const activUser = async (req, res) => {
+    try{
+      const user = await User.aggreate([
+       {
+         $match:{
+            country:"India",
+            age: {$gte:age},
+            isActive: true,
+            email: {isExist: true}
+        }
+       },   
+      ])
+    }
+    catch(err){
+
+    }
+}
+
+const userCountByCountry = async (req, res) => {
+    try{
+       const usersCountByCountry = await User.aggregate([
+        {
+            $group:{
+                _id:"$country",
+                count:{
+                    $sum:1
+                }
+            },
+             $project:{
+                _id:0,
+                country:"$_id",
+                count:1
+            }
+        }
+       ])
+    }
+    catch(err){
+
+    }
+}
+
+// exmpl
+// const usersCountByRole = await User.aggregate([
+//         {
+//             $group:{
+//                  _id:"$roles",
+//                     count:{
+//                     $sum:1
+//                    }
+//             }, 
+//             $prject:{
+//                 roles:"$_id",
+//                 _id:0,
+//                 count:{
+//                     $sum:1
+//                 }
+//             }
+             
+//         }
+//        ])
+
+
+
+
+
+
 module.exports = {
     home, 
     signup,
     login,
     changePassword,
     allUser,
-    logout
+    logout,
+    getByName,
+    getByCountry,
+    userGreaterThenAge,
+    userLessThenAge,
+    notEqualTo,
+    getUserByCountryOrAge,
+    multipleQuery,
+    userByNotAge,
+    getUserByMaxMinAge
 };

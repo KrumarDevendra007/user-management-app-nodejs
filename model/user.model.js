@@ -50,8 +50,15 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum: ['user', 'admin', 'seller', 'superadmin'],
         default:'user'
-    }
+    },
+
+    country: {type:String, requried:false},
+
+    isActive: {type:Boolean, default: true},
+
+    createdAt: {type: Date, default: Date.now}
 },
+
 {
     timestamps:true //this will automatically add createdAt and updatedAt fields to the schema
 });

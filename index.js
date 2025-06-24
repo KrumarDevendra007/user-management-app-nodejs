@@ -1,14 +1,15 @@
 const express =  require('express');
 const app = express();
-const port = 3000;
+const dotenv = require('dotenv');
+const port = process.env.PORT || 3000;
 const userRoutes = require('./view/routes.view'); // Importing user routes
 
 app.use(express.json())
-
 const mongoose = require('mongoose');
+dotenv.config();
 
 //Connect to MongoDB
-mongoose.connect('mongodb+srv://mjrajak47z:H3Pkg3GTHrbWmJDd@cluster0.ht39vu6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+mongoose.connect(process.env.MONGO)
 .then(() => {
     console.log("Connected to MongoDB successfully")
 })
